@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, FolderOpen } from 'lucide-react';
 import { Category } from '../types';
 import { AdminApiService } from './../../utils/adminApi';
-import { ApiService } from '../utils/api';
+import { ApiService } from './../../utils/api';
 
 const CategoryManagement: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
