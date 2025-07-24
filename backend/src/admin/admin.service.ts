@@ -27,6 +27,15 @@ export class AdminService implements OnModuleInit {
     await this.seedAdminUsers();
   }
 
+  async findByUsername(username: string) {
+    return await this.adminUserRepository.findOne({
+      where: [
+        { username },
+        { email: username }
+      ]
+    });
+  }
+
   // Categories
   async getCategories() {
     return await this.categoryRepository.find();

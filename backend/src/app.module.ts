@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
@@ -23,6 +24,7 @@ import { AdminUser } from './admin/entities/admin-user.entity';
       synchronize: true, // Set to false in production
       logging: true,
     }),
+    AuthModule,
     CategoriesModule,
     ProductsModule,
     OrdersModule,
