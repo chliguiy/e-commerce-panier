@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, Package, Truck, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { Order } from '../types';
-import { AdminApiService } from '../utils/adminApi';
+import { AdminApiService } from './../../utils/adminApi';
 
 const OrderManagement: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
