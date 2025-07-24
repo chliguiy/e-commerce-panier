@@ -1,13 +1,14 @@
 import React from 'react';
-import { ShoppingCart, Store } from 'lucide-react';
+import { ShoppingCart, Store, Settings } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 
 interface HeaderProps {
   currentView: 'products' | 'cart' | 'checkout';
   onViewChange: (view: 'products' | 'cart' | 'checkout') => void;
+  onAdminToggle?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
+const Header: React.FC<HeaderProps> = ({ currentView, onViewChange, onAdminToggle }) => {
   const { getTotalItems, toggleCart } = useCart();
   const totalItems = getTotalItems();
 
@@ -56,6 +57,16 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           </nav>
 
           {/* Cart Button */}
+          <div className="flex items-center space-x-2">
+            {onAdminToggle && (
+              <button
+                onClick={onAdminToggle}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200"
+                title="Mode Admin"
+              >
+                <Settings className="h-5 w-5" />
+              </button>
+            )}
           <button
             onClick={toggleCart}
             className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 group"
@@ -67,6 +78,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
               </span>
             )}
           </button>
+          </div>
         </div>
       </div>
     </header>

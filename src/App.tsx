@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CartProvider } from './contexts/CartContext';
 import { useCategories, useProducts } from './hooks/useApi';
+import AdminApp from './components/admin/AdminApp';
 import Header from './components/Header';
 import CategorySidebar from './components/CategorySidebar';
 import ProductGrid from './components/ProductGrid';
@@ -11,6 +12,7 @@ import CartDrawer from './components/CartDrawer';
 type ViewType = 'products' | 'cart' | 'checkout';
 
 function AppContent() {
+  const [isAdminMode, setIsAdminMode] = useState(false);
   const [currentView, setCurrentView] = useState<ViewType>('products');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   
@@ -28,6 +30,11 @@ function AppContent() {
   const handleOrderComplete = () => {
     setCurrentView('products');
   };
+
+  // Check if we're in admin mode (you can add proper authentication here)
+  if (isAdminMode) {
+    return <AdminApp />;
+  }
 
   const handleViewCart = () => {
     setCurrentView('cart');
@@ -75,7 +82,11 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header currentView={currentView} onViewChange={handleViewChange} />
+      <Header 
+        currentView={currentView} 
+        onViewChange={handleViewChange}
+        onAdminToggle={() => setIsAdminMode(!isAdminMode)}
+      />
       <main className="pb-8">
         {renderContent()}
       </main>
