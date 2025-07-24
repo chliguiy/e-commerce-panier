@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Package, 
@@ -7,25 +8,47 @@ import {
   Users, 
   Menu,
   X,
-  LogOut
+  LogOut,
+  ArrowLeft
 } from 'lucide-react';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
-  currentView: string;
-  onViewChange: (view: string) => void;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children, currentView, onViewChange }) => {
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
-    { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard },
-    { id: 'products', label: 'Produits', icon: Package },
-    { id: 'categories', label: 'Catégories', icon: FolderOpen },
-    { id: 'orders', label: 'Commandes', icon: ShoppingCart },
-    { id: 'users', label: 'Utilisateurs Admin', icon: Users },
+    { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin/dashboard' },
+    { id: 'products', label: 'Produits', icon: Package, path: '/admin/products' },
+    { id: 'categories', label: 'Catégories', icon: FolderOpen, path: '/admin/categories' },
+    { id: 'orders', label: 'Commandes', icon: ShoppingCart, path: '/admin/orders' },
+    { id: 'users', label: 'Utilisateurs Admin', icon: Users, path: '/admin/users' },
   ];
+
+  const getCurrentView = () => {
+    const path = location.pathname;
+    if (path.includes('/dashboard')) return 'dashboard';
+    if (path.includes('/products')) return 'products';
+    if (path.includes('/categories')) return 'categories';
+    if (path.includes('/orders')) return 'orders';
+    if (path.includes('/users')) return 'users';
+    return 'dashboard';
+  };
+
+  const currentView = getCurrentView();
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setSidebarOpen(false);
+  };
+
+  const handleBackToStore = () => {
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -66,10 +89,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, currentView, onView
               return (
                 <button
                   key={item.id}
-                  onClick={() => {
-                    onViewChange(item.id);
-                    setSidebarOpen(false);
-                  }}
+                  onClick={() => handleNavigation(item.path)}
                   className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     currentView === item.id
                       ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
@@ -84,7 +104,14 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, currentView, onView
           </div>
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 space-y-2">
+          <button 
+            onClick={handleBackToStore}
+            className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="mr-3 h-5 w-5" />
+            Retour à la boutique
+          </button>
           <button className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors">
             <LogOut className="mr-3 h-5 w-5" />
             Déconnexion
