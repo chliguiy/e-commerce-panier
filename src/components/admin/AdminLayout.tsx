@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   LayoutDashboard, 
   Package, 
@@ -20,6 +21,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout, state } = useAuth();
 
   const menuItems = [
     { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin/dashboard' },
@@ -48,6 +50,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   const handleBackToStore = () => {
     navigate('/');
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/admin/login');
   };
 
   return (
@@ -105,6 +112,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 space-y-2">
+          {/* User Info */}
+          <div className="px-3 py-2 bg-gray-50 rounded-lg mb-2">
+            <p className="text-sm font-medium text-gray-900">{state.user?.username}</p>
+            <p className="text-xs text-gray-500">{state.user?.role === 'super_admin' ? 'Super Admin' : 'Admin'}</p>
+          </div>
+          
           <button 
             onClick={handleBackToStore}
             className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
@@ -112,7 +125,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             <ArrowLeft className="mr-3 h-5 w-5" />
             Retour à la boutique
           </button>
-          <button className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors"
+          >
             <LogOut className="mr-3 h-5 w-5" />
             Déconnexion
           </button>
