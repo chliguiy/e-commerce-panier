@@ -14,16 +14,14 @@ type ViewType = 'products' | 'cart' | 'checkout';
 function MainApp() {
   const [currentView, setCurrentView] = useState<ViewType>('products');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const navigate = useNavigate();
   
   const { categories, loading: categoriesLoading } = useCategories();
   const { products, loading: productsLoading } = useProducts();
-  const { items } = useCart();
+  const { state } = useCart();
 
   const handleViewChange = (view: ViewType) => {
     setCurrentView(view);
-    setIsCartDrawerOpen(false);
   };
 
   const handleCategorySelect = (categoryId: number | null) => {
@@ -35,29 +33,20 @@ function MainApp() {
     navigate('/admin');
   };
 
-  const handleViewCart = () => {
-    setCurrentView('cart');
-    setIsCartDrawerOpen(false);
+  const handleCheckout = () => {
+    setCurrentView('checkout');
   };
 
-  const handleCartDrawerToggle = () => {
-    setIsCartDrawerOpen(!isCartDrawerOpen);
+  const handleOrderComplete = () => {
+    setCurrentView('products');
   };
-
-  const filteredProducts = selectedCategory
-    ? products.filter(product => product.categoryId === selectedCategory)
-    : products;
-
-  const selectedCategoryName = selectedCategory
-    ? categories.find(cat => cat.id === selectedCategory)?.name || 'Catégorie'
-    : 'Tous les produits';
 
   const renderContent = () => {
     switch (currentView) {
       case 'cart':
-        return <Cart onViewChange={handleViewChange} />;
+        return <Cart onCheckout={handleCheckout} />;
       case 'checkout':
-        return <Checkout onViewChange={handleViewChange} />;
+        return <Checkout onOrderComplete={handleOrderComplete} />;
       case 'products':
       default:
         return (
@@ -72,15 +61,19 @@ function MainApp() {
               <div className="p-6">
                 <div className="mb-6">
                   <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                    {selectedCategoryName}
+                    {selectedCategory 
+                      ? categories.find(cat => cat.id === selectedCategory)?.name || 'Catégorie'
+                      : 'Tous les produits'
+                    }
                   </h1>
                   <p className="text-gray-600">
-                    {filteredProducts.length} produit{filteredProducts.length !== 1 ? 's' : ''} disponible{filteredProducts.length !== 1 ? 's' : ''}
+                    Découvrez notre sélection de produits de qualité
                   </p>
                 </div>
                 <ProductGrid
-                  products={filteredProducts}
+                  products={products}
                   loading={productsLoading}
+                  selectedCategory={selectedCategory}
                 />
               </div>
             </main>
@@ -95,8 +88,6 @@ function MainApp() {
         currentView={currentView} 
         onViewChange={handleViewChange}
         onAdminToggle={handleAdminToggle}
-        onCartToggle={handleCartDrawerToggle}
-        cartItemsCount={items.length}
       />
       
       <div className="flex flex-1 overflow-hidden">
@@ -104,9 +95,8 @@ function MainApp() {
       </div>
 
       <CartDrawer
-        isOpen={isCartDrawerOpen}
-        onClose={() => setIsCartDrawerOpen(false)}
-        onViewCart={handleViewCart}
+        onCheckout={handleCheckout}
+        onViewCart={() => handleViewChange('cart')}
       />
     </div>
   );
