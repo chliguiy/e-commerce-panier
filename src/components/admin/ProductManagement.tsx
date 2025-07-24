@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, Package } from 'lucide-react';
 import { Product, Category } from '../types';
-import { AdminApiService } from '../utils/adminApi';
-import { ApiService } from '../utils/api';
+import { AdminApiService } from './../../utils/adminApi';
+import { ApiService } from './../../utils/api';
 
 const ProductManagement: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
