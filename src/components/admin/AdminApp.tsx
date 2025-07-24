@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './AdminLayout';
 import Dashboard from './Dashboard';
 import ProductManagement from './ProductManagement';
@@ -7,26 +8,16 @@ import OrderManagement from './OrderManagement';
 import UserManagement from './UserManagement';
 
 const AdminApp: React.FC = () => {
-  const [currentView, setCurrentView] = useState('dashboard');
-
-  const renderContent = () => {
-    switch (currentView) {
-      case 'products':
-        return <ProductManagement />;
-      case 'categories':
-        return <CategoryManagement />;
-      case 'orders':
-        return <OrderManagement />;
-      case 'users':
-        return <UserManagement />;
-      default:
-        return <Dashboard />;
-    }
-  };
-
   return (
-    <AdminLayout currentView={currentView} onViewChange={setCurrentView}>
-      {renderContent()}
+    <AdminLayout>
+      <Routes>
+        <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/products" element={<ProductManagement />} />
+        <Route path="/categories" element={<CategoryManagement />} />
+        <Route path="/orders" element={<OrderManagement />} />
+        <Route path="/users" element={<UserManagement />} />
+      </Routes>
     </AdminLayout>
   );
 };

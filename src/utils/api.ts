@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080'; // Change this to your servlet URL
+const API_BASE_URL = 'https://localhost:8080'; // Change this to your servlet URL
 
 export class ApiService {
   private static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {

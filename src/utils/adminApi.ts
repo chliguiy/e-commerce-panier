@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'https://localhost:8080';
 
 export class AdminApiService {
   private static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
