@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Users, Shield, Crown } from 'lucide-react';
-import { AdminUser } from '../types/admin';
+import { AdminUser } from './../../types/admin';
 import { AdminApiService } from './../../utils/adminApi';
 
 const UserManagement: React.FC = () => {
