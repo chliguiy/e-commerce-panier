@@ -60,7 +60,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout, onViewCart }) => {
                         {item.product.name}
                       </p>
                       <p className="text-xs text-gray-600">
-                        {item.quantity} × {item.product.price?.toFixed(2)} MAD
+                        {item.quantity} × {parseFloat(item.product.price.toString()).toFixed(2)} MAD
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-gray-900">

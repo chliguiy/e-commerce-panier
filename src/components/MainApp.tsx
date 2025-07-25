@@ -50,7 +50,7 @@ function MainApp() {
       case 'products':
       default:
         return (
-          <div className="flex flex-1 overflow-hidden">
+          <div className="flex justify-centre overflow-hidden">
             <CategorySidebar
               categories={categories}
               selectedCategory={selectedCategory}
@@ -90,7 +90,7 @@ function MainApp() {
         onAdminToggle={handleAdminToggle}
       />
       
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex justify-center overflow-hidden">
         {renderContent()}
       </div>
 
