@@ -73,9 +73,9 @@ const Checkout: React.FC<CheckoutProps> = ({ onOrderComplete }) => {
         items: items.map(item => ({
           product_id: item.product.id,
           quantity: item.quantity,
-          price: item.product.price
+          price: Number(item.product.price)
         })),
-        total: getTotalPrice(),
+        total: Number(getTotalPrice()),
         paymentMethod: selectedPaymentMethod
       };
 

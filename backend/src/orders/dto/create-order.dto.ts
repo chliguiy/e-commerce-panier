@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsArray, IsNumber, IsOptional, ValidateNested } from 'class-validator';
+import { IsString, IsEmail, IsArray, IsNumber, IsOptional, ValidateNested, Transform } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CustomerDto {
@@ -17,12 +17,33 @@ export class CustomerDto {
 
 export class OrderItemDto {
   @IsNumber()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      const num = parseFloat(value);
+      return isNaN(num) ? value : num;
+    }
+    return value;
+  })
   product_id: number;
 
   @IsNumber()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      const num = parseInt(value, 10);
+      return isNaN(num) ? value : num;
+    }
+    return value;
+  })
   quantity: number;
 
   @IsNumber()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      const num = parseFloat(value);
+      return isNaN(num) ? value : num;
+    }
+    return value;
+  })
   price: number;
 }
 
@@ -37,6 +58,13 @@ export class CreateOrderDto {
   items: OrderItemDto[];
 
   @IsNumber()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      const num = parseFloat(value);
+      return isNaN(num) ? value : num;
+    }
+    return value;
+  })
   total: number;
 
   @IsOptional()
