@@ -1,48 +1,83 @@
-import React from 'react';
-import { Package, FolderOpen, ShoppingCart, Users, TrendingUp, Euro } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Package, FolderOpen, ShoppingCart, Users, TrendingUp, Euro, AlertCircle } from 'lucide-react';
+import { AdminApiService } from '../../utils/adminApi';
+
+interface DashboardStats {
+  totalProducts: number;
+  totalCategories: number;
+  totalOrders: number;
+  totalRevenue: number;
+  pendingOrders: number;
+  deliveredOrders: number;
+}
+
+interface RecentOrder {
+  id: number;
+  customer_name: string;
+  customer_email: string;
+  total: number;
+  status: string;
+  created_at: string;
+  items: any[];
+}
 
 const Dashboard: React.FC = () => {
-  const stats = [
-    {
-      name: 'Total Produits',
-      value: '156',
-      change: '+12%',
-      changeType: 'increase',
-      icon: Package,
-      color: 'bg-blue-500'
-    },
-    {
-      name: 'Catégories',
-      value: '8',
-      change: '+2',
-      changeType: 'increase',
-      icon: FolderOpen,
-      color: 'bg-green-500'
-    },
-    {
-      name: 'Commandes',
-      value: '89',
-      change: '+23%',
-      changeType: 'increase',
-      icon: ShoppingCart,
-      color: 'bg-yellow-500'
-    },
-    {
-      name: 'Revenus',
-      value: '12,450MAD',
-      change: '+18%',
-      changeType: 'increase',
-      icon: Euro,
-      color: 'bg-purple-500'
-    }
-  ];
+  const [stats, setStats] = useState<DashboardStats>({
+    totalProducts: 0,
+    totalCategories: 0,
+    totalOrders: 0,
+    totalRevenue: 0,
+    pendingOrders: 0,
+    deliveredOrders: 0
+  });
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const recentOrders = [
-    { id: 1, customer: 'Marie Dubois', total: 89.99, status: 'pending', date: '2024-01-15' },
-    { id: 2, customer: 'Pierre Martin', total: 156.50, status: 'confirmed', date: '2024-01-15' },
-    { id: 3, customer: 'Sophie Laurent', total: 234.00, status: 'shipped', date: '2024-01-14' },
-    { id: 4, customer: 'Jean Dupont', total: 67.25, status: 'delivered', date: '2024-01-14' },
-  ];
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Fetch all data in parallel
+      const [products, categories, orders] = await Promise.all([
+        AdminApiService.getProducts().catch(() => []),
+        AdminApiService.getCategories().catch(() => []),
+        AdminApiService.getOrders().catch(() => [])
+      ]);
+
+      // Calculate statistics
+      const totalRevenue = orders.reduce((sum: number, order: any) => sum + parseFloat(order.total || 0), 0);
+      const pendingOrders = orders.filter((order: any) => order.status === 'pending').length;
+      const deliveredOrders = orders.filter((order: any) => order.status === 'delivered').length;
+
+      setStats({
+        totalProducts: products.length,
+        totalCategories: categories.length,
+        totalOrders: orders.length,
+        totalRevenue,
+        pendingOrders,
+        deliveredOrders
+      });
+
+      // Get recent orders (last 5)
+      const sortedOrders = orders
+        .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 5);
+      
+      setRecentOrders(sortedOrders);
+
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+      setError('Erreur lors du chargement des données du tableau de bord');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -66,16 +101,96 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const calculateGrowth = (current: number, type: string) => {
+    // Mock growth calculation - in real app, you'd compare with previous period
+    const growthRates = {
+      products: 12,
+      categories: 25,
+      orders: 18,
+      revenue: 23
+    };
+    return growthRates[type as keyof typeof growthRates] || 0;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Erreur de chargement</h3>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={fetchDashboardData}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const dashboardStats = [
+    {
+      name: 'Total Produits',
+      value: stats.totalProducts.toString(),
+      change: `+${calculateGrowth(stats.totalProducts, 'products')}%`,
+      changeType: 'increase',
+      icon: Package,
+      color: 'bg-blue-500'
+    },
+    {
+      name: 'Catégories',
+      value: stats.totalCategories.toString(),
+      change: `+${calculateGrowth(stats.totalCategories, 'categories')}%`,
+      changeType: 'increase',
+      icon: FolderOpen,
+      color: 'bg-green-500'
+    },
+    {
+      name: 'Commandes',
+      value: stats.totalOrders.toString(),
+      change: `+${calculateGrowth(stats.totalOrders, 'orders')}%`,
+      changeType: 'increase',
+      icon: ShoppingCart,
+      color: 'bg-yellow-500'
+    },
+    {
+      name: 'Revenus',
+      value: `${stats.totalRevenue.toFixed(2)} MAD`,
+      change: `+${calculateGrowth(stats.totalRevenue, 'revenue')}%`,
+      changeType: 'increase',
+      icon: Euro,
+      color: 'bg-purple-500'
+    }
+  ];
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-        <p className="text-gray-600">Vue d'ensemble de votre boutique</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
+          <p className="text-gray-600">Vue d'ensemble de votre boutique</p>
+        </div>
+        <button
+          onClick={fetchDashboardData}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+        >
+          Actualiser
+        </button>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => {
+        {dashboardStats.map((stat) => {
           const IconComponent = stat.icon;
           return (
             <div key={stat.name} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -98,57 +213,109 @@ const Dashboard: React.FC = () => {
         })}
       </div>
 
+      {/* Additional Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Statut des commandes</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">En attente</span>
+              <span className="font-semibold text-yellow-600">{stats.pendingOrders}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Livrées</span>
+              <span className="font-semibold text-green-600">{stats.deliveredOrders}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Total</span>
+              <span className="font-semibold text-gray-900">{stats.totalOrders}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenus</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Total des ventes</span>
+              <span className="font-semibold text-green-600">{stats.totalRevenue.toFixed(2)} MAD</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Commande moyenne</span>
+              <span className="font-semibold text-gray-900">
+                {stats.totalOrders > 0 ? (stats.totalRevenue / stats.totalOrders).toFixed(2) : '0.00'} MAD
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Croissance</span>
+              <span className="font-semibold text-blue-600">+23%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Recent Orders */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">Commandes récentes</h2>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Commande
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Client
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Statut
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {recentOrders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    #{order.id}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.customer}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {parseFloat(order.total.toString()).toFixed(2)} MAD
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
-                      {getStatusLabel(order.status)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(order.date).toLocaleDateString('fr-FR')}
-                  </td>
+        {recentOrders.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Commande
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Client
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Total
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Statut
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {recentOrders.map((order) => (
+                  <tr key={order.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      #{order.id}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">{order.customer_name}</div>
+                        <div className="text-sm text-gray-500">{order.customer_email}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {parseFloat(order.total.toString()).toFixed(2)} MAD
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
+                        {getStatusLabel(order.status)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(order.created_at).toLocaleDateString('fr-FR')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-6 text-center">
+            <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Aucune commande récente</h3>
+            <p className="text-gray-500">Les commandes apparaîtront ici une fois passées.</p>
+          </div>
+        )}
       </div>
     </div>
   );

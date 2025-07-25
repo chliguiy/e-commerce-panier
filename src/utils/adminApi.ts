@@ -101,4 +101,9 @@ export class AdminApiService {
       method: 'DELETE',
     });
   }
+
+  // Dashboard Statistics
+  static async getDashboardStats() {
+    return this.request<any>('/api/admin/dashboard/stats');
+  }
 }

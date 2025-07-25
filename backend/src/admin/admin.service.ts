@@ -122,6 +122,40 @@ export class AdminService implements OnModuleInit {
     return { success: true };
   }
 
+  // Dashboard Statistics
+  async getDashboardStats() {
+    const [products, categories, orders] = await Promise.all([
+      this.productRepository.find(),
+      this.categoryRepository.find(),
+      this.orderRepository.find({ relations: ['items'] })
+    ]);
+
+    const totalRevenue = orders.reduce((sum, order) => sum + parseFloat(order.total.toString()), 0);
+    const pendingOrders = orders.filter(order => order.status === 'pending').length;
+    const deliveredOrders = orders.filter(order => order.status === 'delivered').length;
+    const confirmedOrders = orders.filter(order => order.status === 'confirmed').length;
+    const shippedOrders = orders.filter(order => order.status === 'shipped').length;
+    const cancelledOrders = orders.filter(order => order.status === 'cancelled').length;
+
+    return {
+      totalProducts: products.length,
+      totalCategories: categories.length,
+      totalOrders: orders.length,
+      totalRevenue,
+      ordersByStatus: {
+        pending: pendingOrders,
+        confirmed: confirmedOrders,
+        shipped: shippedOrders,
+        delivered: deliveredOrders,
+        cancelled: cancelledOrders
+      },
+      averageOrderValue: orders.length > 0 ? totalRevenue / orders.length : 0,
+      recentOrders: orders
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 5)
+    };
+  }
+
   private async seedAdminUsers() {
     const count = await this.adminUserRepository.count();
     if (count === 0) {

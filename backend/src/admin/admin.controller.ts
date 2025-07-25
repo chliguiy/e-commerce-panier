@@ -86,4 +86,10 @@ export class AdminController {
   async deleteAdminUser(@Param('id', ParseIntPipe) id: number) {
     return await this.adminService.deleteAdminUser(id);
   }
+
+  // Dashboard Statistics
+  @Get('dashboard/stats')
+  async getDashboardStats() {
+    return await this.adminService.getDashboardStats();
+  }
 }
