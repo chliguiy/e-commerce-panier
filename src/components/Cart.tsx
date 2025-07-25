@@ -45,7 +45,7 @@ const Cart: React.FC<CartProps> = ({ onCheckout }) => {
                 <h3 className="text-lg font-medium text-gray-900">{item.product.name}</h3>
                 <p className="text-gray-600 text-sm mt-1">{item.product.description}</p>
                 <p className="text-xl font-semibold text-blue-600 mt-2">
-                  {item.product.price.toFixed(2)} €
+                  {parseFloat(item.product.price.toString())?.toFixed(2)} MAD
                 </p>
               </div>
 
@@ -71,7 +71,7 @@ const Cart: React.FC<CartProps> = ({ onCheckout }) => {
 
               <div className="text-right">
                 <p className="text-lg font-semibold text-gray-900">
-                  {(item.product.price * item.quantity).toFixed(2)} €
+                  {(item.product.price * item.quantity).toFixed(2)} MAD
                 </p>
                 <button
                   onClick={() => removeItem(item.product.id)}
@@ -88,7 +88,7 @@ const Cart: React.FC<CartProps> = ({ onCheckout }) => {
           <div className="flex justify-between items-center mb-4">
             <span className="text-lg font-medium text-gray-900">Total :</span>
             <span className="text-2xl font-bold text-gray-900">
-              {getTotalPrice().toFixed(2)} €
+              {getTotalPrice().toFixed(2)} MAD
             </span>
           </div>
           

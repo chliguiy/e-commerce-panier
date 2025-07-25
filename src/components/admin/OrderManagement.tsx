@@ -134,7 +134,7 @@ const OrderManagement: React.FC = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {order.total.toFixed(2)} €
+                      {parseFloat(order.total).toFixed(2)} MAD
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
@@ -232,11 +232,11 @@ const OrderManagement: React.FC = () => {
                           <div className="flex-1">
                             <p className="font-medium text-gray-900">{item.product.name}</p>
                             <p className="text-sm text-gray-600">
-                              {item.quantity} × {item.price.toFixed(2)} €
+                              {item.quantity} × {item.price?.toFixed(2)} MAD
                             </p>
                           </div>
                           <p className="font-semibold text-gray-900">
-                            {(item.quantity * item.price).toFixed(2)} €
+                            {(item.quantity * item.price).toFixed(2)} MAD
                           </p>
                         </>
                       )}
@@ -259,7 +259,7 @@ const OrderManagement: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center text-lg font-bold">
                   <span>Total:</span>
-                  <span>{selectedOrder.total.toFixed(2)} €</span>
+                  <span>{selectedOrder.total.toFixed(2)} MAD</span>
                 </div>
               </div>
             </div>

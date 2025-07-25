@@ -106,7 +106,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ onBack, onPaymentSelect
           <div className="flex justify-between items-center mb-4">
             <span className="text-lg font-medium text-gray-900">Total à payer :</span>
             <span className="text-2xl font-bold text-blue-600">
-              {total.toFixed(2)} €
+              {total.toFixed(2)} MAD
             </span>
           </div>
           

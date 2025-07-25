@@ -141,7 +141,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onOrderComplete }) => {
           </p>
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <p className="text-sm text-gray-600">
-              Total de la commande : <span className="font-semibold text-gray-900">{getTotalPrice().toFixed(2)} €</span>
+              Total de la commande : <span className="font-semibold text-gray-900">{getTotalPrice().toFixed(2)} MAD</span>
             </p>
             <p className="text-sm text-gray-600 mt-1">
               Mode de paiement : <span className="font-semibold text-gray-900">
@@ -207,7 +207,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onOrderComplete }) => {
                   <p className="text-sm text-gray-600">Qté : {item.quantity}</p>
                 </div>
                 <p className="text-sm font-semibold text-gray-900">
-                  {(item.product.price * item.quantity).toFixed(2)} €
+                  {(item.product.price * item.quantity).toFixed(2)} MAD
                 </p>
               </div>
             ))}
@@ -217,7 +217,7 @@ const Checkout: React.FC<CheckoutProps> = ({ onOrderComplete }) => {
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold text-gray-900">Total :</span>
               <span className="text-xl font-bold text-blue-600">
-                {getTotalPrice().toFixed(2)} €
+                {getTotalPrice().toFixed(2)} MAD
               </span>
             </div>
           </div>

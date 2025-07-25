@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://localhost:8080'; // Change this to your servlet URL
+const API_BASE_URL = ''; // Change this to your servlet URL
 
 export class ApiService {
   private static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -59,6 +59,7 @@ export const mockCategories = [
   { id: 4, name: 'Sport', description: 'Équipements de sport et de plein air' },
   { id: 5, name: 'Livres', description: 'Livres et matériel éducatif' },
 ];
+
 
 export const mockProducts = [
   {

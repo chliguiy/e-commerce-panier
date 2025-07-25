@@ -70,7 +70,7 @@ const ProductManagement: React.FC = () => {
     setFormData({
       name: product.name,
       description: product.description,
-      price: product.price.toString(),
+      price: product.price?.toString(),
       image: product.image,
       category_id: product.category_id.toString(),
       stock: product.stock.toString()
@@ -160,7 +160,7 @@ const ProductManagement: React.FC = () => {
               <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
               <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-lg font-bold text-blue-600">{product.price.toFixed(2)} €</span>
+                <span className="text-lg font-bold text-blue-600">{parseFloat(product.price)?.toFixed(2)} MAD</span>
                 <span className="text-sm text-gray-500">Stock: {product.stock}</span>
               </div>
               <p className="text-xs text-gray-500 mb-3">{getCategoryName(product.category_id)}</p>
@@ -223,7 +223,7 @@ const ProductManagement: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Prix (€)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Prix (MAD)</label>
                     <input
                       type="number"
                       step="0.01"

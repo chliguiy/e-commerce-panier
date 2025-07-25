@@ -60,11 +60,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout, onViewCart }) => {
                         {item.product.name}
                       </p>
                       <p className="text-xs text-gray-600">
-                        {item.quantity} × {item.product.price.toFixed(2)} €
+                        {item.quantity} × {item.product.price?.toFixed(2)} MAD
                       </p>
                     </div>
                     <p className="text-sm font-semibold text-gray-900">
-                      {(item.product.price * item.quantity).toFixed(2)} €
+                      {(item.product.price * item.quantity).toFixed(2)} MAD
                     </p>
                   </div>
                 ))}
@@ -78,7 +78,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ onCheckout, onViewCart }) => {
               <div className="flex justify-between items-center">
                 <span className="font-medium text-gray-900">Total :</span>
                 <span className="text-lg font-bold text-gray-900">
-                  {getTotalPrice().toFixed(2)} €
+                  {getTotalPrice().toFixed(2)} MAD
                 </span>
               </div>
               

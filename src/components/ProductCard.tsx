@@ -37,7 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         <div className="flex items-center justify-between mb-4">
           <span className="text-2xl font-bold text-blue-600">
-            {product.price.toFixed(2)} €
+            {parseFloat(product.price.toString())?.toFixed(2)} MAD
           </span>
           <span className="text-sm text-gray-500">
             {product.stock} en stock

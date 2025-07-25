@@ -16,9 +16,9 @@ import { AdminUser } from './admin/entities/admin-user.entity';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT) || 3306,
+      port: parseInt(process.env.DB_PORT) || 8889,
       username: process.env.DB_USERNAME || 'root',
-      password: process.env.DB_PASSWORD || '',
+      password: process.env.DB_PASSWORD || 'root',
       database: process.env.DB_DATABASE || 'boutique_fr',
       entities: [Category, Product, Order, OrderItem, AdminUser],
       synchronize: true, // Set to false in production

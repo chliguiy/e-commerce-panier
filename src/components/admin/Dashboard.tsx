@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
     },
     {
       name: 'Revenus',
-      value: '12,450€',
+      value: '12,450MAD',
       change: '+18%',
       changeType: 'increase',
       icon: Euro,
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
                     {order.customer}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {order.total.toFixed(2)} €
+                    {parseFloat(order.total.toString()).toFixed(2)} MAD
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>

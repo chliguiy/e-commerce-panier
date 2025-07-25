@@ -140,7 +140,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ paymentMethod, total, onBack,
                   <span>Traitement en cours...</span>
                 </>
               ) : (
-                <span>Payer {total.toFixed(2)} €</span>
+                <span>Payer {total.toFixed(2)} MAD</span>
               )}
             </button>
           </form>
@@ -174,7 +174,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ paymentMethod, total, onBack,
               <div className="text-sm text-gray-500 space-y-1">
                 <p>• Paiement en espèces accepté</p>
                 <p>• Terminal de paiement disponible</p>
-                <p>• Frais de service : 2,50 €</p>
+                <p>• Frais de service : 2,50 MAD</p>
               </div>
             </div>
             <button
@@ -202,7 +202,7 @@ const PaymentForm: React.FC<PaymentFormProps> = ({ paymentMethod, total, onBack,
             {paymentMethod === 'delivery' && 'Paiement à la livraison'}
           </h2>
           <p className="text-gray-600">
-            Total à payer : <span className="font-semibold text-blue-600">{total.toFixed(2)} €</span>
+            Total à payer : <span className="font-semibold text-blue-600">{total.toFixed(2)} MAD</span>
           </p>
         </div>
 
